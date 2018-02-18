@@ -65,6 +65,10 @@ export class PortModel extends BaseModel<BaseModelListener> {
 		return linkModel;
 	}
 
+	canLinkToPort(port: PortModel): boolean {
+		return true;
+	}
+
 	isLocked() {
 		return super.isLocked() || this.getParent().isLocked();
 	}

@@ -348,6 +348,32 @@ export class DiagramWidget extends React.Component<DiagramProps, DiagramState> {
 					}
 				});
 			}
+
+			_.forEach(this.state.action.selectionModels, model => {
+				//only care about points connecting to things
+				if (!(model.model instanceof PointModel)) {
+					return;
+				}
+
+				var link = model.model.getLink();
+				var sourcePort: PortModel = link.getSourcePort();
+				var targetPort: PortModel = link.getTargetPort();
+				if (sourcePort !== null && targetPort !== null) {
+					if (!sourcePort.canLinkToPort(targetPort)) {
+						//link not allowed
+						link.remove();
+					}
+					else if (_.some(_.values(targetPort.getLinks()), (l: LinkModel) => l !== link && (l.getSourcePort() === sourcePort || l.getTargetPort() === sourcePort))) {
+						//link is a duplicate
+						link.remove();
+					}
+				}
+
+				if (targetPort === null) {
+					link.remove();
+				}
+			});
+
 			diagramEngine.clearRepaintEntities();
 			this.stopFiringAction(!this.state.wasMoved);
 		} else {

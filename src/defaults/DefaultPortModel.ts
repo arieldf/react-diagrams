@@ -26,4 +26,8 @@ export class DefaultPortModel extends PortModel {
 			label: this.label
 		});
 	}
+
+	canLinkToPort(port: PortModel): boolean {
+		return port instanceof DefaultPortModel && this.in !== port.in;
+	}
 }
